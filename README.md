@@ -36,9 +36,16 @@ Run `aifiler` followed by your request in quotes. By default, it scans only the 
 aifiler "organize my images into folders by year"
 ```
 
-## Quick Start
+Download the latest binary from [releases](https://github.com/joshiminh/aifiler/releases) or install via a package manager.
 
-Download the latest binary from [releases](https://github.com/joshiminh/aifiler/releases) or clone the repository and build it manually.
+### Scoop (Windows)
+
+```powershell
+scoop bucket add aifiler https://github.com/JoshiMinh/aifiler
+scoop install aifiler
+```
+
+### Manual Installation
 
 ### Windows
 

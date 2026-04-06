@@ -30,23 +30,14 @@ checksum:
 release:
   draft: true
 
-chocolateys:
-  - name: aifiler
-    title: AI File Assistant
-    authors: Aifiler Contributors
-    project_url: https://github.com/JoshiMinh/aifiler
-    url_template: "https://github.com/JoshiMinh/aifiler/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-    description: AI-powered local-first file management copilot.
-    summary: Semantic file management with safety-first dry-runs.
-    tags: "ai files cli local"
-
 scoops:
   - name: aifiler
     repository:
       owner: JoshiMinh
-      name: scoop-bucket
+      name: aifiler
       branch: main
-      token: "{{ .Env.SCOOP_GITHUB_TOKEN }}"
+      folder: bucket
+      token: "{{ .Env.GITHUB_TOKEN }}"
     homepage: https://github.com/JoshiMinh/aifiler
     description: AI-powered local-first file management copilot.
     license: MIT
