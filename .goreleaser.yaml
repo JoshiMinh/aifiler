@@ -37,8 +37,8 @@ scoops:
       owner: JoshiMinh
       name: aifiler
       branch: main
-      folder: bucket
       token: "{{ .Env.GITHUB_TOKEN }}"
+    directory: bucket
     homepage: https://github.com/JoshiMinh/aifiler
     description: AI-powered local-first file management copilot.
     license: MIT
