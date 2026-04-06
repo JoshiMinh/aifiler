@@ -1,0 +1,22 @@
+{
+    "version": "0.0.2",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/JoshiMinh/aifiler/releases/download/v0.0.2/aifiler_0.0.2_windows_amd64.zip",
+            "bin": [
+                "aifiler.exe"
+            ],
+            "hash": "ae0b61ae3e186c7f19b9fee4dab7d4dea057ea840a2627d6f6ad40e66766a155"
+        },
+        "arm64": {
+            "url": "https://github.com/JoshiMinh/aifiler/releases/download/v0.0.2/aifiler_0.0.2_windows_arm64.zip",
+            "bin": [
+                "aifiler.exe"
+            ],
+            "hash": "34107f8436ad6ada6e79d084d14dd901855569b10852d2498d73608a481c42e1"
+        }
+    },
+    "homepage": "https://github.com/JoshiMinh/aifiler",
+    "license": "MIT",
+    "description": "AI-powered local-first file management copilot."
+}
