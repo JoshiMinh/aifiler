@@ -61,17 +61,23 @@ go build -o aifiler ./cmd/aifiler
 ./aifiler
 ```
 
----
+## ⚙️ Configuration
 
-Supported providers (in order of preference):
+`aifiler` stores its configuration in `config.yaml`. You can set your API keys directly in the file or use the command line:
 
-| Provider | Key | Notes |
-| :--- | :--- | :--- |
-| OpenAI | `openai` | Open AI GPT models via their API |
-| Anthropic | `anthropic` | Claude 3.x family via their API |
-| Gemini | `gemini` | Google Gemini models via their API |
-| Ollama | `ollama` | Local models via Ollama |
-| Vercel AI Gateway (recommended) | `vercel` | Routes to multiple providers |
+```bash
+aifiler set <provider> <api_key>
+```
+
+### Supported Providers
+
+| Provider | Key | Default Model | Notes |
+| :--- | :--- | :--- | :--- |
+| **OpenAI** | `openai` | `gpt-4o` | High quality planning |
+| **Anthropic** | `anthropic` | `claude-3-5-sonnet` | Excellent reasoning |
+| **Google Gemini** | `gemini` | `gemini-1.5-flash` | Fast and long context |
+| **Ollama** | `ollama` | `llama3` | Run 100% locally |
+| **Vercel AI Gateway** | `vercel` | `gemini-2.5-flash` | **Recommended** for speed |
 
 ---
 
@@ -81,4 +87,10 @@ Contributions are welcome! If you find a bug or have a feature request, please o
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for the full text.
+
+---
+
+<div align="center">
+Built with ❤️ by [JoshiMinh](https://github.com/JoshiMinh)
+</div>
