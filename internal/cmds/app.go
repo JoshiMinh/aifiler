@@ -16,6 +16,7 @@ type App struct {
 	maxDepth int
 	showAll  bool
 	force    bool
+	agent    bool
 }
 
 // NewApp creates a new App instance.
@@ -24,6 +25,7 @@ func NewApp() *App {
 		maxDepth: 1,
 		showAll:  false,
 		force:    false,
+		agent:    false,
 	}
 }
 
@@ -50,6 +52,8 @@ func (a *App) Run(ctx context.Context, args []string) int {
 			a.showAll = true
 		case "-force":
 			a.force = true
+		case "-agent":
+			a.agent = true
 		default:
 			remainingArgs = append(remainingArgs, arg)
 		}
@@ -104,6 +108,7 @@ func (a *App) printHelp() {
 	fmt.Printf("    %-25s %s\n", core.MutedStyle.Sprint("-d<n>"), "Scan up to <n> levels of subfolders (e.g. -d2, -d3)")
 	fmt.Printf("    %-25s %s\n", core.MutedStyle.Sprint("-all"), "Include all file entries in AI context (no truncation)")
 	fmt.Printf("    %-25s %s\n", core.MutedStyle.Sprint("-force"), "Force the AI to return a suggestion")
+	fmt.Printf("    %-25s %s\n", core.MutedStyle.Sprint("-agent"), "Prefer installed CLI tools and command-driven actions")
 	fmt.Println()
 
 	core.HeaderStyle.Println("  INTENTS")
@@ -139,6 +144,7 @@ func (a *App) printHelp() {
 	fmt.Println("    " + core.MutedStyle.Sprint("aifiler \"/delete temp log files\""))
 	fmt.Println("    " + core.MutedStyle.Sprint("aifiler \"/explain the project structure\""))
 	fmt.Println("    " + core.MutedStyle.Sprint("aifiler -force \"make some improvements\""))
+	fmt.Println("    " + core.MutedStyle.Sprint("aifiler -agent \"convert images with magick if available\""))
 	fmt.Println()
 }
 

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -75,6 +76,9 @@ func (c *VercelGatewayClient) Prompt(ctx context.Context, prompt string) (string
 
 	resp, err := vercelPromptHTTPClient.Do(req)
 	if err != nil {
+		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+			return "", fmt.Errorf("vercel gateway request was canceled")
+		}
 		return "", fmt.Errorf("vercel gateway request failed: %w", err)
 	}
 	defer resp.Body.Close()

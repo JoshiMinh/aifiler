@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -71,5 +72,18 @@ func StartThinking(msg string) *Thinking {
 func (t *Thinking) Stop(finalMsg string) {
 	t.stop <- true
 	<-t.done
-	fmt.Printf("\r\033[K%s %s\n", SuccessIcon, SuccessStyle.Sprint(finalMsg))
+	cleaned := strings.TrimSpace(finalMsg)
+	if cleaned == "" {
+		fmt.Print("\r\033[K")
+		return
+	}
+	lines := strings.Split(cleaned, "\n")
+	fmt.Printf("\r\033[K%s %s\n", SuccessIcon, SuccessStyle.Sprint(strings.TrimSpace(lines[0])))
+	for _, line := range lines[1:] {
+		text := strings.TrimSpace(line)
+		if text == "" {
+			continue
+		}
+		fmt.Printf("  %s\n", MutedStyle.Sprint(text))
+	}
 }
