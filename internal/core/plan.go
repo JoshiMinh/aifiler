@@ -1,15 +1,20 @@
 package core
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
-// AIPlan represents the structured plan returned by the LLM.
+// CommandExecutionTimeout is the default timeout for command execution.
+// Can be overridden via context with values.
+const CommandExecutionTimeout = 5 * time.Minute
+
 type AIPlan struct {
 	Summary    string      `json:"summary"`
 	NextPrompt string      `json:"next_prompt"`
@@ -46,8 +51,12 @@ func ParsePlan(raw string) (AIPlan, error) {
 	return p, nil
 }
 
-
 func ExecuteOperation(cwd string, op Operation) error {
+	return ExecuteOperationContext(context.Background(), cwd, op)
+}
+
+// ExecuteOperationContext executes an operation with context support for timeouts.
+func ExecuteOperationContext(ctx context.Context, cwd string, op Operation) error {
 	typ := strings.ToLower(strings.TrimSpace(op.Type))
 	switch typ {
 	case "create_dir", "mkdir":
@@ -88,18 +97,39 @@ func ExecuteOperation(cwd string, op Operation) error {
 		}
 		return os.RemoveAll(target)
 	case "run_command":
-		cmdArgs := strings.Fields(op.Command)
-		if len(cmdArgs) == 0 {
-			return nil
-		}
-		cmd := exec.Command(cmdArgs[0], cmdArgs[1:]...)
-		cmd.Dir = cwd
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		return cmd.Run()
+		return executeCommandWithSafety(ctx, cwd, op.Command)
 	default:
 		return fmt.Errorf("unknown operation type: %s", typ)
 	}
+}
+
+// executeCommandWithSafety executes a command with proper parsing, timeouts, and error handling.
+func executeCommandWithSafety(ctx context.Context, cwd string, command string) error {
+	cmdArgs := ParseCommandLineWithShellQuotes(strings.TrimSpace(command))
+	if len(cmdArgs) == 0 {
+		return nil
+	}
+
+	// Use provided context or create one with default timeout
+	execCtx := ctx
+	if ctx == context.Background() {
+		var cancel context.CancelFunc
+		execCtx, cancel = context.WithTimeout(ctx, CommandExecutionTimeout)
+		defer cancel()
+	}
+
+	cmd := exec.CommandContext(execCtx, cmdArgs[0], cmdArgs[1:]...)
+	cmd.Dir = cwd
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	err := cmd.Run()
+	if err != nil {
+		// Classify the error for better diagnostics
+		classified := ClassifyError(err)
+		return fmt.Errorf("%s (error type: %s)", err, classified.Type)
+	}
+	return nil
 }
 
 // ResolvePath resolves a relative path safely within cwd.

@@ -28,7 +28,7 @@ func (a *App) runDynamicPrompt(ctx context.Context, prompt string) int {
 		return 1
 	}
 
-	availableTools := detectAvailableTools([]string{"ffmpeg", "magick", "exiftool", "git", "go", "node", "npm", "python", "python3"})
+	availableTools := detectAvailableToolsWithVersions(ctx, []string{"ffmpeg", "magick", "exiftool", "git", "go", "node", "npm", "python", "python3"})
 	var conversation []promptTurn
 
 	for {
@@ -121,6 +121,22 @@ func (a *App) runDynamicPrompt(ctx context.Context, prompt string) int {
 	}
 }
 
+func detectAvailableToolsWithVersions(ctx context.Context, candidates []string) []core.ToolInfo {
+	tools := make([]core.ToolInfo, 0, len(candidates))
+	for _, candidate := range candidates {
+		name := strings.TrimSpace(candidate)
+		if name == "" {
+			continue
+		}
+		info := core.DetectToolWithVersion(ctx, name)
+		if info.Available {
+			tools = append(tools, info)
+		}
+	}
+	return tools
+}
+
+// Deprecated: use detectAvailableToolsWithVersions instead
 func detectAvailableTools(candidates []string) []string {
 	available := make([]string, 0, len(candidates))
 	for _, candidate := range candidates {
@@ -135,7 +151,7 @@ func detectAvailableTools(candidates []string) []string {
 	return available
 }
 
-func augmentWorkspaceContext(workspaceContext string, availableTools []string, conversation []promptTurn) string {
+func augmentWorkspaceContext(workspaceContext string, availableTools []core.ToolInfo, conversation []promptTurn) string {
 	var builder strings.Builder
 	builder.WriteString(workspaceContext)
 
@@ -143,7 +159,12 @@ func augmentWorkspaceContext(workspaceContext string, availableTools []string, c
 		builder.WriteString("\n\nDetected CLI tools:\n")
 		for _, tool := range availableTools {
 			builder.WriteString("- ")
-			builder.WriteString(tool)
+			builder.WriteString(tool.Name)
+			if tool.Version != "" {
+				builder.WriteString(" (")
+				builder.WriteString(strings.TrimSpace(tool.Version))
+				builder.WriteString(")")
+			}
 			builder.WriteString("\n")
 		}
 	} else {
@@ -220,9 +241,15 @@ func injectToolAvailabilityChecks(plan core.AIPlan) core.AIPlan {
 		if shouldPreflightToolCheck(op) {
 			toolName := firstCommandToken(op.Command)
 			if toolName != "" {
+				// Add availability check
 				updated = append(updated, core.Operation{
 					Type:    "run_command",
 					Command: availabilityCheckCommand(toolName),
+				})
+				// Add sanity check if defined
+				updated = append(updated, core.Operation{
+					Type:    "run_command",
+					Command: sanitycheckCommand(toolName),
 				})
 			}
 		}
@@ -230,6 +257,14 @@ func injectToolAvailabilityChecks(plan core.AIPlan) core.AIPlan {
 	}
 	plan.Operations = updated
 	return plan
+}
+
+// sanitycheckCommand generates a sanity check command for the tool.
+func sanitycheckCommand(toolName string) string {
+	if check, exists := core.ToolRegistry[toolName]; exists {
+		return check.Command
+	}
+	return ""
 }
 
 func shouldPreflightToolCheck(op core.Operation) bool {
