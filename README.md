@@ -38,6 +38,8 @@ aifiler "organize my images into folders by year"
 
 Download the latest binary from [releases](https://github.com/joshiminh/aifiler/releases) or install via a package manager.
 
+The app reads and writes `config.yaml` next to the executable. If you move the binary, move the config file with it.
+
 ### Scoop (Windows)
 
 ```powershell
@@ -63,10 +65,10 @@ go build -o aifiler ./cmd/aifiler
 
 ## ⚙️ Configuration
 
-`aifiler` stores its configuration in `config.yaml`. You can set your API keys directly in the file or use the command line:
+`aifiler` stores its configuration in `config.yaml`. You can set API keys directly in the file or use the interactive provider menu:
 
 ```bash
-aifiler set <provider> <api_key>
+aifiler provider
 ```
 
 ### Supported Providers

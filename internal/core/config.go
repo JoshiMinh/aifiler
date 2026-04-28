@@ -46,12 +46,12 @@ func configPath() (string, error) {
 
 // defaultConfigComment is prepended to new config files so users can edit keys directly.
 const defaultConfigComment = `# aifiler configuration
-# Edit API keys here directly, or run: aifiler set "<provider>"
+# Edit API keys here directly, or run: aifiler provider
 # Supported providers: openai, anthropic, gemini, ollama, vercel
 #
 `
 
-// LoadOrDefault attempts to load the configuration from config.yaml in the cwd.
+// LoadOrDefault attempts to load the configuration from config.yaml next to the executable.
 // If the file doesn't exist, it returns a default configuration without error.
 func LoadOrDefault() (Config, error) {
 	path, err := configPath()
@@ -77,7 +77,7 @@ func LoadOrDefault() (Config, error) {
 	return cfg, nil
 }
 
-// InitDefault creates a default config.yaml in the cwd if one does not already exist.
+// InitDefault creates a default config.yaml next to the executable if one does not already exist.
 func InitDefault() (string, error) {
 	path, err := configPath()
 	if err != nil {
@@ -89,7 +89,7 @@ func InitDefault() (string, error) {
 	return path, writeConfig(Default(), path)
 }
 
-// Save persists the provided configuration back to config.yaml in the cwd.
+// Save persists the provided configuration back to config.yaml next to the executable.
 func Save(cfg Config) (string, error) {
 	path, err := configPath()
 	if err != nil {
