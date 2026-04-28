@@ -1,4 +1,4 @@
-package cmds
+package cli
 
 import (
 	"context"
@@ -6,16 +6,16 @@ import (
 	"sort"
 	"strings"
 
-	"aifiler/internal/api"
+	"aifiler/internal/ai"
 	"aifiler/internal/core"
 
 	"github.com/manifoldco/promptui"
 )
 
 var selectTemplates = &promptui.SelectTemplates{
-	FuncMap: promptui.FuncMap,
-	Label:   "{{ . }}",
-	Active:  "\u27a4 {{ . | cyan }}", // fallback for simple strings
+	FuncMap:  promptui.FuncMap,
+	Label:    "{{ . }}",
+	Active:   "\u27a4 {{ . | cyan }}", // fallback for simple strings
 	Inactive: "  {{ . }}",
 	Selected: "\u2714 {{ . | green }}",
 	Details:  "",
@@ -31,8 +31,8 @@ type providerItem struct {
 
 // providerSelectTemplates defines how provider items are rendered.
 var providerSelectTemplates = &promptui.SelectTemplates{
-	FuncMap: promptui.FuncMap,
-	Label:   "{{ . }}",
+	FuncMap:  promptui.FuncMap,
+	Label:    "{{ . }}",
 	Active:   "\u27a4 {{ .Name | cyan }} key: {{ .Key | faint }}{{ if .IsActive }} (active){{ end }}",
 	Inactive: "  {{ .Name }} key: {{ .Key | faint }}{{ if .IsActive }} (active){{ end }}",
 	Selected: "\u2714 {{ .Name | green }}",
@@ -42,7 +42,7 @@ var providerSelectTemplates = &promptui.SelectTemplates{
 
 func init() {
 	// Initialize custom primary color if needed, but 'cyan' is built-in and matches PrimaryColor.
-	// For better compatibility with Windows and to avoid the nesting bug, 
+	// For better compatibility with Windows and to avoid the nesting bug,
 	// we keep the templates clean.
 }
 
@@ -69,7 +69,7 @@ func (a *App) runList(ctx context.Context) int {
 
 	core.HeaderStyle.Printf("\n  Fetching models for %s...\n\n", providerLabel)
 
-	clientInst := api.NewClient(core.ClientOptions{
+	clientInst := ai.NewClient(core.ClientOptions{
 		Provider: p.Key,
 		Config:   cfg,
 	})

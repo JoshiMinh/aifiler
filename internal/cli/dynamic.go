@@ -1,4 +1,4 @@
-package cmds
+package cli
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"aifiler/internal/core"
+	"aifiler/internal/workspace"
 )
 
 type promptTurn struct {
@@ -32,7 +33,7 @@ func (a *App) runDynamicPrompt(ctx context.Context, prompt string) int {
 	var conversation []promptTurn
 
 	for {
-		workspaceContext := core.BuildWorkspaceContext(a.maxDepth, a.showAll)
+		workspaceContext := workspace.BuildWorkspaceContext(a.maxDepth, a.showAll)
 		workspaceContext = augmentWorkspaceContext(workspaceContext, availableTools, conversation)
 		thinking := core.StartThinking("AI is thinking")
 

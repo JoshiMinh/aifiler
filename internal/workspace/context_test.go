@@ -1,4 +1,4 @@
-package core
+package workspace
 
 import "testing"
 

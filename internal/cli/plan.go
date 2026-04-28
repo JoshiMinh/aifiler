@@ -1,4 +1,4 @@
-package cmds
+package cli
 
 import (
 	"bufio"
@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"aifiler/internal/core"
+
 	"github.com/schollz/progressbar/v3"
 )
 

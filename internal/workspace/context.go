@@ -1,10 +1,15 @@
-package core
+package workspace
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+)
+
+const (
+	fileIcon   = "▫"
+	folderIcon = "▸"
 )
 
 // BuildWorkspaceContext scans the current directory to the given depth and returns
@@ -43,9 +48,9 @@ func BuildWorkspaceContext(maxDepth int, showAll bool) string {
 		}
 
 		indent := strings.Repeat("  ", depth-1)
-		icon := FileIcon
+		icon := fileIcon
 		if d.IsDir() {
-			icon = FolderIcon
+			icon = folderIcon
 		}
 
 		fileCount++

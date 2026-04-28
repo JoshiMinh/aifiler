@@ -1,5 +1,5 @@
-// Package cmds provides the command-line interface logic for the aifiler application.
-package cmds
+// Package cli provides the command-line interface logic for the aifiler application.
+package cli
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"aifiler/internal/api"
+	"aifiler/internal/ai"
 	"aifiler/internal/core"
 )
 
@@ -170,7 +170,7 @@ func (a *App) newClient(providerOverride, modelOverride string) (core.Client, st
 		model = "openai/gpt-4o-mini"
 	}
 
-	client := api.NewClient(core.ClientOptions{
+	client := ai.NewClient(core.ClientOptions{
 		Provider: provider,
 		Model:    model,
 		Config:   cfg,
