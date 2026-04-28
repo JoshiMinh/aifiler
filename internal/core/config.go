@@ -10,11 +10,26 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// ToolsConfig defines tool-related settings.
+type ToolsConfig struct {
+	Registry map[string]ToolCheckConfig `yaml:"registry"`
+	Groups   map[string][]string        `yaml:"groups"`
+	TaskMap  map[string][]string        `yaml:"task_map"`
+}
+
+// ToolCheckConfig defines a tool's sanity check configuration.
+type ToolCheckConfig struct {
+	Command  string `yaml:"command"`
+	Timeout  int    `yaml:"timeout"` // seconds
+	Required bool   `yaml:"required"`
+}
+
 // Config represents the application configuration settings, including default model and API keys.
 type Config struct {
 	DefaultProvider string            `yaml:"default_provider"`
 	DefaultModel    string            `yaml:"default_model"`
 	APIKeys         map[string]string `yaml:"api_keys"`
+	Tools           ToolsConfig       `yaml:"tools"`
 }
 
 const configFileName = "config.yaml"
@@ -115,6 +130,32 @@ func Default() Config {
 			"gemini":    "",
 			"vercel":    "",
 			"ollama":    "",
+		},
+		Tools: ToolsConfig{
+			Registry: map[string]ToolCheckConfig{
+				"exiftool": {Command: "exiftool -ver", Timeout: 5, Required: false},
+				"magick":   {Command: "magick -version", Timeout: 5, Required: false},
+				"ffmpeg":   {Command: "ffmpeg -version", Timeout: 5, Required: false},
+				"git":      {Command: "git --version", Timeout: 5, Required: false},
+				"go":       {Command: "go version", Timeout: 5, Required: false},
+				"node":     {Command: "node --version", Timeout: 5, Required: false},
+				"npm":      {Command: "npm --version", Timeout: 5, Required: false},
+				"python":   {Command: "python --version", Timeout: 5, Required: false},
+				"python3":  {Command: "python3 --version", Timeout: 5, Required: false},
+			},
+			Groups: map[string][]string{
+				"media":    {"ffmpeg", "magick", "exiftool"},
+				"dev":      {"git", "go", "node", "npm", "python", "python3"},
+				"image":    {"exiftool", "magick"},
+				"video":    {"ffmpeg"},
+				"metadata": {"exiftool"},
+			},
+			TaskMap: map[string][]string{
+				"organize_images": {"exiftool", "magick"},
+				"process_videos":  {"ffmpeg"},
+				"organize_media":  {"ffmpeg", "exiftool", "magick"},
+				"rename_files":    {"exiftool"},
+			},
 		},
 	}
 }
