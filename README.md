@@ -1,8 +1,9 @@
+> [!WARNING]
+> **This repository is permanently archived.** It is no longer maintained and will not receive any further updates or bug fixes.
+
 <div align="center">
 
 # 📂 aifiler
-
-> [!WARNING] **This repository is permanently archived.** It is no longer maintained and will not receive any further updates or bug fixes.
 
 Your AI-powered local filesystem assistant. Instead of manual sorting and naming, simply describe your intent and let `aifiler` handle the planning, approval, and execution.
 
